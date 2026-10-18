@@ -37,7 +37,13 @@ MD
 python3 - "$A" <<'PY'
 import sys,json,urllib.request
 a=sys.argv[1]; txt=open('/home/agent/AGENTS.stack-expert.md').read()
-req=urllib.request.Request(f"http://127.0.0.1:3100/api/agents/{a}/instructions-bundle/file",data=json.dumps({"path":"AGENTS.md","content":txt}).encode(),method="PUT",headers={"content-type":"application/json"})
+base=None
+try:
+    g=json.load(urllib.request.urlopen(f"http://127.0.0.1:3100/api/agents/{a}/instructions-bundle/file?path=AGENTS.md"))
+    print("GET keys:",list(g)[:12]); base=g.get("revisionId") or g.get("baseRevisionId") or (g.get("file") or {}).get("revisionId")
+except Exception as e: print("GET err",e)
+print("base:",base)
+req=urllib.request.Request(f"http://127.0.0.1:3100/api/agents/{a}/instructions-bundle/file",data=json.dumps({"path":"AGENTS.md","content":txt,"baseRevisionId":base}).encode(),method="PUT",headers={"content-type":"application/json"})
 try: print("PUT:",urllib.request.urlopen(req).read()[:200])
 except Exception as e: print("PUT err",e, getattr(e,"read",lambda:b"")()[:300])
 PY
