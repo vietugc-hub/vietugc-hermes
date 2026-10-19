@@ -13,7 +13,7 @@ echo "Received ${#K} characters."
 case "$K" in thk_live_*) ;; *) echo "That does not look like a Token Harbor key. Run again and paste ONCE."; exit 1;; esac
 if [ ${#K} -gt 100 ]; then echo "Pasted more than once (${#K} characters). Run again and paste ONCE, then press Enter."; exit 1; fi
 {
-cp ~/.hermes/config.yaml ~/.hermes/config.yaml.bak-before-tokenharbor
+[ -f ~/.hermes/config.yaml.bak-before-tokenharbor ] || cp ~/.hermes/config.yaml ~/.hermes/config.yaml.bak-before-tokenharbor
 touch ~/.hermes/.env; chmod 600 ~/.hermes/.env
 grep -v '^TOKENHARBOR_API_KEY=' ~/.hermes/.env > ~/.hermes/.env.tmp; mv ~/.hermes/.env.tmp ~/.hermes/.env
 printf 'TOKENHARBOR_API_KEY=%s\n' "$K" >> ~/.hermes/.env; chmod 600 ~/.hermes/.env
